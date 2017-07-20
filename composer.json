@@ -1,6 +1,7 @@
 {
     "name": "pliasun/pdf-to-png",
     "description": "Convert a pdf to png",
+    "minimum-stability": "dev",
     "keywords": [
         "pliasun",
         "pdf-to-png",
