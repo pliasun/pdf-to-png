@@ -16,6 +16,9 @@ class PdfToPng
 
     protected $page = 1;
 
+    protected $x = 1024;
+    protected $y = 768;
+
     protected $imagick;
 
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
@@ -48,6 +51,22 @@ class PdfToPng
 
         return $this;
     }
+
+    /**
+     * Set the image resolution.
+     *
+     * @param int $resolution
+     *
+     * @return $this
+     */
+    public function setImageResolution($x, $y)
+    {
+        $this->x = $x;
+        $this->y = $y;
+
+        return $this;
+    }
+
 
     /**
      * Set the output format.
@@ -164,7 +183,10 @@ class PdfToPng
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
-
+        
+        //$this->imagick->setImageResolution(72, 72);
+		
+		$this->imagick->resampleImage(144, 144, \Imagick::FILTER_UNDEFINED, 1);
         //$this->imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
 
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
