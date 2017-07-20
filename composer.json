@@ -1,0 +1,41 @@
+{
+    "name": "pliasun/pdf-to-png",
+    "description": "Convert a pdf to png",
+    "keywords": [
+        "pliasun",
+        "pdf-to-png",
+        "pdf",
+        "convert",
+        "image",
+        "png"
+    ],
+    "homepage": "https://github.com/pliasun/pdf-to-png",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Pliasun",
+            "email": "alexpliasun@gmail.com",
+        }
+    ],
+    "require": {
+        "php" : ">=5.5.0",
+        "ext-imagick" : "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "scrutinizer/ocular": "~1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pliasun\\PdfToPng\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pliasun\\PdfToPng\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
