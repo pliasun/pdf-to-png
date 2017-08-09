@@ -10,14 +10,14 @@ class PdfToPng
 {
     protected $pdfFile;
 
-    protected $resolution = 144;
+    protected $resolution = 72;
 
-    protected $outputFormat = 'jpg';
+    protected $outputFormat = 'png';
 
     protected $page = 1;
 
-    protected $x = 1024;
-    protected $y = 768;
+    protected $x = 72;
+    protected $y = 72;
 
     protected $imagick;
 
@@ -181,14 +181,9 @@ class PdfToPng
     public function getImageData($pathToImage)
     {
         $this->imagick->setResolution($this->resolution, $this->resolution);
-
+        $this->imagick->setImageResolution(72, 72);
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
-        
-        //$this->imagick->setImageResolution(72, 72);
-		
-		$this->imagick->resampleImage(144, 144, \Imagick::FILTER_UNDEFINED, 1);
-        //$this->imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
-
+		$this->imagick->resampleImage($this->x, $this->y, \Imagick::FILTER_UNDEFINED, 1);
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
 
         return $this->imagick;
@@ -216,5 +211,23 @@ class PdfToPng
         }
 
         return $outputFormat;
+    }
+
+    /**
+     * Return info image.
+     *
+     * @param string $pathToImage
+     *
+     * @return arrray[geometry, dpi_x, dpi_y]
+     */
+    public function getResolutionData()
+    {
+        $geo = $this->imagick->getImageGeometry();
+        $res = $this->imagick->getImageResolution();
+
+        ($res['x']) ? $kx = $res['x'] : $kx = 72;
+        ($res['y']) ? $ky = $res['y'] : $ky = 72;
+
+        return ['geo' => $geo, 'x' => $kx, 'y' => $ky];
     }
 }
