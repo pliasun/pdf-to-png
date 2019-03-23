@@ -34,7 +34,7 @@ class PdfToPng
             throw new PdfDoesNotExist();
         }
 
-        $this->imagick = new \Imagick($pdfFile);
+        $this->imagick = new \Imagick($pdfFile.'[0]');
         $this->pdfFile = $pdfFile;
     }
 
@@ -130,6 +130,24 @@ class PdfToPng
         return $this->imagick->getNumberImages();
     }
 
+    public function disableAlpha()
+    {
+        // Image has transparency
+        if ($this->imagick->getImageAlphaChannel()) {
+                
+            // Remove alpha channel
+            $this->imagick->setImageAlphaChannel(11);
+
+            // Set image background color
+            $this->imagick->setImageBackgroundColor('white');
+
+            // Merge layers
+            $this->imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+            
+        }
+
+        return $this;
+    }
     /**
      * Save the image to the given path.
      *
@@ -137,9 +155,9 @@ class PdfToPng
      *
      * @return bool
      */
-    public function saveImage($pathToImage)
+    public function saveImage($pathToImage, $disableAlpha = false)
     {
-        $imageData = $this->getImageData($pathToImage);
+        $imageData = $this->getImageData($pathToImage, $disableAlpha);
 
         return file_put_contents($pathToImage, $imageData) === false ? false : true;
     }
@@ -178,11 +196,16 @@ class PdfToPng
      *
      * @return \Imagick
      */
-    public function getImageData($pathToImage)
+    public function getImageData($pathToImage, $disableAlpha = false)
     {
         $this->imagick->setResolution($this->resolution, $this->resolution);
         $this->imagick->setImageResolution(72, 72);
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+
+        if($disableAlpha) {
+            $this->imagick = $this->imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+        }
+
 		$this->imagick->resampleImage($this->x, $this->y, \Imagick::FILTER_UNDEFINED, 1);
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
 
